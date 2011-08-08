@@ -47,8 +47,13 @@ int value = 0;
 
 void nukeeeprom(void) {
 	initTaskList();		// stop any currently running background tasks
-	int addr = STARTDB;
-	while (addr <= ENDDB) eewrite(addr++, EMPTY);
+	int addr;
+	
+	for (addr = STARTDB; addr < ENDDB; addr++) {
+	    if (eeread(addr) != EMPTY) {
+	        eewrite(addr, EMPTY);
+	    }
+	}
 }
 
 void reboot(void) {
