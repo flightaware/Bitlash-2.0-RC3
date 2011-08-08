@@ -462,7 +462,7 @@ void eeputs(int);
 // Use the predefined constant from the avr-gcc support file
 //
 #ifndef RESERVE_EE_BYTES
-#define RESERVE_EE_BYTES 0
+#define RESERVE_EE_BYTES 32
 #endif
 
 #define ENDDB (E2END - RESERVE_EE_BYTES)
