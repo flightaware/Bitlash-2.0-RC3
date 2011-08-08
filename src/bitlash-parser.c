@@ -167,61 +167,6 @@ void getsym(void) {
 #endif
 }
 
-#if 0
-// Re-prime the lookahead character buffer 'inchar'
-void primec(void) {
-	// terrible horrible eeprom addressing kludge
-	if (isram(fetchptr)) inchar = *fetchptr;
-	else {
-		inchar = eeread(dekludge(fetchptr));
-		if (inchar == 255) inchar = 0;
-	}
-
-#ifdef PARSER_TRACE
-		// char trace
-		if (trace) {
-			spb('<'); 
-			if (inchar >= 0x20) spb(inchar);
-			else { spb('\\'); printInteger(inchar); }
-			spb('>');
-		}
-#endif
-}
-
-
-// Fetch and return the next char from input stream.
-void fetchc(void) {
-	// terrible horrible eeprom addressing kludge
-	if (isram(fetchptr)) {
-		if (*fetchptr) fetchptr++;
-		inchar = *fetchptr;
-	} 
-	else {	// fetch char from eeprom
-		int addr = dekludge(fetchptr);
-		inchar = eeread(addr);
-		if ((inchar != 0) && (inchar != 255)) {
-			inchar = eeread(++addr);
-			fetchptr = kludge(addr);		// save incremented pointer
-			if (inchar == 255) inchar = 0;
-		}
-	}
-
-#ifdef PARSER_TRACE
-	// char trace
-	if (trace) {
-		//spb('['); printInteger(inchar);spb(':'); if (inchar) spb(inchar); spb(']');
-		spb('[');
-		if (inchar >= 0x20) spb(inchar);
-		else { spb('\\'); printInteger(inchar); }
-		spb(']');
-	}
-#endif
-
-	//return inchar;
-}
-#endif
-
-
 
 #ifdef PARSER_TRACE
 void tb(void) {		// print a mini-trace
@@ -233,22 +178,16 @@ void tb(void) {		// print a mini-trace
 #endif
 
 
-#if 0
-// call macro in eeprom
-void calleeprommacro(int macrotext) {
-	// terrible horrible eeprom kludge
-	//callmacro(kludge(macrotext));
-	fetchptr = kludge(macrotext);
-	primec();
-}
-#endif
-
 
 ////////////////////
 ///
 ///		Expression evaluation stack
 ///
+#if defined(MEGA)
+#define VSTACKLEN 256
+#else
 #define VSTACKLEN 64
+#endif
 byte vsptr;			  		// value stack pointer
 numvar *arg;				// argument frame pointer
 numvar vstack[VSTACKLEN];  	// value stack
@@ -448,6 +387,35 @@ byte pinnum(char id[]) {
 #endif
 
 
+
+//////////
+//
+// Pin alias variables
+//
+#define PIN_ALIASES 1
+
+#ifdef PIN_ALIASES
+
+#define PV_ANALOG 0x80	// high bit flag to distinguish s_dpin from s_apin
+#define PV_MASK 0x7f
+
+prog_char pinnames[] PROGMEM = { 
+	"tx\0rx\0led\0vin\0"
+};
+prog_uchar pinvalues[] PROGMEM = { 
+	0, 1, 13, (PV_ANALOG | 1)
+};
+
+byte findpinname(char *alias) {
+	if (!findindex(alias, (prog_char *) pinnames, 0)) return 0;		// sets symval
+	byte pin = pgm_read_byte(pinvalues + symval);
+	sym = (pin & PV_ANALOG) ? s_apin : s_dpin;
+	symval = pin & PV_MASK;
+	return 1;
+}
+#endif
+
+
 // Numeric variables
 #ifndef NUMVARS
 #define NUMVARS 26
@@ -606,6 +574,10 @@ void parseid(void) {
 	else if (findindex(idbuf, (prog_char *) functiondict, 1)) sym = s_nfunct;
 #ifdef LONG_ALIASES
 	else if (findindex(idbuf, (prog_char *) aliasdict, 0)) sym = s_nfunct;
+#endif
+
+#ifdef PIN_ALIASES
+	else if (findpinname(idbuf)) {;}		// sym and symval are set in findpinname
 #endif
 
 #ifdef USER_FUNCTIONS
