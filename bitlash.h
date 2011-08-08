@@ -27,6 +27,7 @@
 
 ***/
 #include "WProgram.h"
+#include "src/bitlash.h"
 
 ///////////////////////
 //	Start Bitlash, and give it cycles to do stuff
