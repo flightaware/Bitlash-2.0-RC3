@@ -476,6 +476,7 @@ void expected(byte);
 void expectedchar(byte);
 void unexpected(byte);
 void missing(byte);
+void fatal2(char, char);
 //void oops(int);						// fatal exit
 
 
