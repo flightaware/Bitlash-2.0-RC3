@@ -29,7 +29,7 @@
 #include "bitlash.h"
 
 // Enable this for script-in-file support
-#define SDFILE
+// #define SDFILE
 
 #if defined(SDFILE)
 
@@ -300,7 +300,6 @@ numvar *a = arg;
 		a = (numvar *) (a[2]);
 	}
 }
-
 
 #if defined(SDFILE)
 
