@@ -72,6 +72,18 @@ numvar setBaud(numvar pin, unumvar baud) {
 		return 0;
 	}
 #endif
+#ifdef ALTERNATE_OUTPIN2
+	else if (pin == ALTERNATE_OUTPIN2) {
+		Serial2.begin(baud);
+		return 0;
+	}
+#endif
+#ifdef ALTERNATE_OUTPIN3
+	else if (pin == ALTERNATE_OUTPIN3) {
+		Serial3.begin(baud);
+		return 0;
+	}
+#endif
 
 	bittime[pin] = (1000000/baud) - clockCyclesToMicroseconds(50);
 	pinMode(pin, OUTPUT);				// make it an output
@@ -90,6 +102,12 @@ void setOutput(byte pin) {
 #endif
 #ifdef ALTERNATE_OUTPIN
 	if (outpin != ALTERNATE_OUTPIN)
+#endif
+#ifdef ALTERNATE_OUTPIN2
+	if (outpin != ALTERNATE_OUTPIN2)
+#endif
+#ifdef ALTERNATE_OUTPIN3
+	if (outpin != ALTERNATE_OUTPIN3)
 #endif
 
 	// set the softserial baud if it's not already set
@@ -159,6 +177,12 @@ void spb(char c) {
 #endif
 #ifdef ALTERNATE_OUTPIN
 	if (outpin == ALTERNATE_OUTPIN) { Serial1.print(c); return; }
+#endif
+#ifdef ALTERNATE_OUTPIN2
+	if (outpin == ALTERNATE_OUTPIN2) { Serial2.print(c); return; }
+#endif
+#ifdef ALTERNATE_OUTPIN3
+	if (outpin == ALTERNATE_OUTPIN3) { Serial3.print(c); return; }
 #endif
 #ifdef SOFTWARE_SERIAL_TX
 	whackabyte(c);
