@@ -79,6 +79,7 @@ typedef void (*serialOutputFunc)(byte);
 byte serialIsOverridden(void);
 void setOutputHandler(serialOutputFunc);
 void resetOutputHandler(void);
+void setOutput(byte pin);
 
 ///////////////////////
 //	File functions
