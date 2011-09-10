@@ -233,7 +233,7 @@ void beginEthernet(unsigned long baud) {
 // MEGA is auto-enabled to build for the Arduino Mega
 // if the '1280 define is present
 //
-#if defined(__AVR_ATmega1280__)
+#if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
 #define MEGA 1
 
 #define beginSerial Serial.begin
@@ -250,8 +250,13 @@ void beginEthernet(unsigned long baud) {
 //
 #define MEGA_DEFAULT_SERIAL 1
 #define MEGA_ALTERNATE_SERIAL 18
+#define MEGA_ALTERNATE_SERIAL2 16
+#define MEGA_ALTERNATE_SERIAL3 14
+
 #define DEFAULT_OUTPIN MEGA_DEFAULT_SERIAL
 #define ALTERNATE_OUTPIN MEGA_ALTERNATE_SERIAL
+#define ALTERNATE_OUTPIN2 MEGA_ALTERNATE_SERIAL2
+#define ALTERNATE_OUTPIN3 MEGA_ALTERNATE_SERIAL3
 
 #endif	// defined (1280)
 
